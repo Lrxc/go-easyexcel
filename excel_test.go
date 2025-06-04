@@ -29,18 +29,31 @@ func (DatabaseConv) Status_Read(value any) any {
 	return slices.Index(arr, value.(string))
 }
 
+func Init() {
+	//注册自定义转换器
+	RegConvert(DatabaseConv{})
+}
+
 // 生成excel
 func TestGen(t *testing.T) {
-	d := Database{
-		DbUrl:  "127.0.0.1:3306",
-		DbUser: "user",
-		DbPwd:  "user",
-		Status: 1,
+	Init()
+
+	d := []Database{
+		Database{
+			DbUrl:  "127.0.0.1:3306",
+			DbUser: "user",
+			DbPwd:  "user",
+			Status: 1,
+		},
+		Database{
+			DbUrl:  "127.0.0.1:5432",
+			DbUser: "dev",
+			DbPwd:  "dev",
+			Status: 0,
+		},
 	}
 
-	RegConvert(DatabaseConv{})
-
-	gen, err := ExcelWrite([]Database{d})
+	gen, err := ExcelWrite(d)
 	if err != nil {
 		log.Println("err: ", err)
 	}
@@ -49,7 +62,7 @@ func TestGen(t *testing.T) {
 
 // 解析excel
 func TestParse(t *testing.T) {
-	RegConvert(DatabaseConv{})
+	Init()
 
 	var dbs []Database
 	err := ExcelRead("test.xlsx", &dbs)
