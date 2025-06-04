@@ -14,8 +14,9 @@ type Database struct {
 	Status int8   `excel:"状态" convert:"DatabaseConv.Status"` //设置转换器
 }
 
-type DatabaseConv struct {
-}
+type DatabaseConv struct{}
+
+func (DatabaseConv) EasyExcelConvert() {}
 
 // excel写入转换(添加_Write)
 func (DatabaseConv) Status_Write(value any) any {

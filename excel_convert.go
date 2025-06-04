@@ -9,7 +9,13 @@ import (
 // 对象注册表
 var funcRegistry = make(map[string]interface{})
 
-func RegConvert(convert interface{}) {
+// 所有的转换器都要实现该接口
+type IBaseConvert interface {
+	EasyExcelConvert()
+}
+
+// 注册转换器
+func RegConvert(convert IBaseConvert) {
 	beanName := reflect.TypeOf(convert).Name()
 	funcRegistry[beanName] = convert
 }
