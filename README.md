@@ -2,7 +2,7 @@
 
 
 # 使用
-```shell
+```go
 package easyexcel
 
 import (
