@@ -1,4 +1,4 @@
-package go_easyexcel
+package easyexcel
 
 const (
 	TAG_EASYEXCEL_NAME      = "excel"

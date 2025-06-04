@@ -1,4 +1,4 @@
-package go_easyexcel
+package easyexcel
 
 import (
 	"fmt"
