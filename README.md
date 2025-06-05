@@ -1,9 +1,20 @@
 # Go EasyExcel
 
-
 # 使用
+```shell
+go get github.com/Lrxc/go-easyexcel v1.0.8
+```
+
 ```go
-package easyexcel
+//写入excel
+easyexcel.ExcelWrite()
+//读取excel
+easyexcel.ExcelRead()
+```
+
+# 示例
+```go
+package main
 
 import (
 	"log"
