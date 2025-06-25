@@ -15,9 +15,11 @@ type IBaseConvert interface {
 }
 
 // 注册转换器
-func RegConvert(convert IBaseConvert) {
-	beanName := reflect.TypeOf(convert).Name()
-	funcRegistry[beanName] = convert
+func RegConvert(converts ...IBaseConvert) {
+	for _, convert := range converts {
+		beanName := reflect.TypeOf(convert).Name()
+		funcRegistry[beanName] = convert
+	}
 }
 
 // 反射执行转换器
