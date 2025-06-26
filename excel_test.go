@@ -8,10 +8,10 @@ import (
 )
 
 type Database struct {
-	DbUrl  string `excel:"数据库地址"`                            //excel字段名
-	DbUser string `excel:"数据库用户名"`                           //excel字段名
-	DbPwd  string `excel:"-"`                                //忽略字段
-	Status int8   `excel:"状态" convert:"DatabaseConv.Status"` //设置转换器
+	DbUrl  string `excel:"数据库地址"`                          //excel字段名
+	DbUser string `excel:"数据库用户名"`                         //excel字段名
+	DbPwd  string `excel:"-"`                              //忽略字段
+	Status int8   `excel:"状态,convert=DatabaseConv.Status"` //设置转换器
 }
 
 type DatabaseConv struct{}
@@ -33,6 +33,11 @@ func (DatabaseConv) Status_Read(value any) any {
 func Init() {
 	//注册自定义转换器
 	RegConvert(DatabaseConv{})
+}
+
+func TestExcel(t *testing.T) {
+	TestGen(t)
+	TestParse(t)
 }
 
 // 生成excel
@@ -72,6 +77,6 @@ func TestParse(t *testing.T) {
 	}
 
 	for _, db := range dbs {
-		log.Println(db)
+		log.Printf("%+v", db)
 	}
 }

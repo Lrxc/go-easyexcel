@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/xuri/excelize/v2"
 	"reflect"
+	"strings"
 )
 
 // 将结构体数组导出为Excel文件
@@ -108,11 +109,23 @@ func headStyle(f *excelize.File) int {
 
 // 设置单元格的值（处理特殊类型）
 func transValue(field reflect.StructField, fieldValue any) interface{} {
+	tag := field.Tag.Get(TAG_EASYEXCEL_NAME)
+	split := strings.Split(tag, ",")
+
+	convertTag := ""
+	for _, part := range split {
+		if strings.HasPrefix(part, TAG_EASYEXCEL_CONVERT) {
+			convertTag = strings.TrimPrefix(part, TAG_EASYEXCEL_CONVERT)
+			break
+		}
+	}
+
 	// 检查是否有转换器
-	if convertTag := field.Tag.Get(TAG_EASYEXCEL_CONVERT); convertTag != "" {
+	if convertTag != "" {
 		// 反射调用转换函数
-		dynamic, _ := TransConvert(convertTag+EASYEXCEL_CONVERT_WRITE, fieldValue)
-		if dynamic == nil {
+		dynamic, err := TransConvert(convertTag+EASYEXCEL_CONVERT_WRITE, fieldValue)
+		if err != nil {
+			fmt.Printf("excel convent err: field=%s, %s", field.Name, err)
 			return fieldValue
 		}
 		return dynamic[0]
@@ -122,16 +135,16 @@ func transValue(field reflect.StructField, fieldValue any) interface{} {
 
 // 判断是否应该忽略字段
 func shouldIgnoreField(field reflect.StructField) bool {
-	if field.Tag.Get(TAG_EASYEXCEL_NAME) == "-" {
-		return true
-	}
-	return false
+	tag := field.Tag.Get(TAG_EASYEXCEL_NAME)
+	return tag == "" || tag == "-"
 }
 
-// 获取表头名称
+// 获取表头名称(excel:"状态,convert=UserConv.Status")
 func getHeaderName(field reflect.StructField) string {
-	if name := field.Tag.Get(TAG_EASYEXCEL_NAME); name != "" && name != "-" {
-		return name
+	tag := field.Tag.Get(TAG_EASYEXCEL_NAME)
+	if tag != "" && tag != "-" {
+		split := strings.Split(tag, ",")
+		return split[0]
 	}
 	return field.Name
 }

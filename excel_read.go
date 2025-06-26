@@ -5,6 +5,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func ExcelRead(filePath string, dest interface{}) error {
@@ -95,16 +96,25 @@ func findFieldByHeader(typ reflect.Type, header string) *fieldInfo {
 		field := typ.Field(i)
 
 		tag := field.Tag.Get(TAG_EASYEXCEL_NAME)
-		convert := field.Tag.Get(TAG_EASYEXCEL_CONVERT)
+		split := strings.Split(tag, ",")
+		title := split[0]
 
-		if tag == "" || tag != header {
+		convertTag := ""
+		for _, part := range split {
+			if strings.HasPrefix(part, TAG_EASYEXCEL_CONVERT) {
+				convertTag = strings.TrimPrefix(part, TAG_EASYEXCEL_CONVERT)
+				break
+			}
+		}
+
+		if title != header {
 			continue
 		}
 
 		return &fieldInfo{
 			index:   i,
-			ignore:  tag == "-",
-			convert: convert,
+			ignore:  title == "" || title == "-",
+			convert: convertTag,
 		}
 	}
 	return nil
