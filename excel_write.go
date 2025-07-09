@@ -125,8 +125,11 @@ func transValue(field reflect.StructField, fieldValue any) interface{} {
 		// 反射调用转换函数
 		dynamic, err := TransConvert(convertTag+EASYEXCEL_CONVERT_WRITE, fieldValue)
 		if err != nil {
-			fmt.Printf("excel convent err: field=%s, %s", field.Name, err)
-			return fieldValue
+			dynamic, err = TransConvert(convertTag, fieldValue)
+			if err != nil {
+				fmt.Printf("excel convent err: field=%s, %s", field.Name, err)
+				return fieldValue
+			}
 		}
 		return dynamic[0]
 	}

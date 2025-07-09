@@ -41,7 +41,11 @@ func TransConvert(convertTag string, args ...interface{}) ([]interface{}, error)
 	}
 
 	// 调用函数
-	out := reflect.ValueOf(fn).MethodByName(methodName).Call(in)
+	method := reflect.ValueOf(fn).MethodByName(methodName)
+	if !method.IsValid() {
+		return nil, fmt.Errorf("method %s not found", methodName)
+	}
+	out := method.Call(in)
 
 	// 转换返回值
 	var results []interface{}

@@ -69,8 +69,13 @@ func ExcelReadWithSheetName(filePath string, sheetName string, dest interface{})
 			var dynamic interface{} = cellValue
 			if info.convert != "" {
 				// 应用转换器
-				res, _ := TransConvert(info.convert+EASYEXCEL_CONVERT_READ, cellValue)
-				dynamic = res[0]
+				res, err := TransConvert(info.convert+EASYEXCEL_CONVERT_READ, cellValue)
+				if err != nil {
+					res, _ = TransConvert(info.convert, cellValue)
+				}
+				if res != nil && len(res) > 0 {
+					dynamic = res[0]
+				}
 			}
 
 			if err := setFieldValue(field, dynamic); err != nil {

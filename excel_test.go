@@ -18,6 +18,12 @@ type DatabaseConv struct{}
 
 func (DatabaseConv) EasyExcelConvert() {}
 
+// excel读写二合一转换(优先使用 _Read/_Write)
+func (DatabaseConv) Status(value any) any {
+	var arr = []string{"异常", "正常"}
+	return arr[value.(int8)]
+}
+
 // excel写入转换(添加_Write)
 func (DatabaseConv) Status_Write(value any) any {
 	var arr = []string{"异常", "正常"}
